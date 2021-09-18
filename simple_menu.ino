@@ -62,7 +62,10 @@ choose from a list or display a message.
     #define I2C_SCL 22
     #define encoder0PinA  13
     #define encoder0PinB  14
-    #define encoder0Press 15                   // button 
+    #define encoder0Press 27                   // button , moved to pin 27 from 15 - pugs
+    // rotary encoder power pins added by pugs
+    #define encoderVCC 26
+    #define encoderGND 25
     
   #elif defined (__AVR_ATmega328P__)
     // Arduino Uno
@@ -91,6 +94,9 @@ choose from a list or display a message.
     bool reButtonState = 0;                   // current debounced state of the button
     uint32_t reButtonTimer = millis();        // time button state last changed
     int reButtonMinTime = 500;                // minimum milliseconds between allowed button status changes
+
+
+
   
   // oled menu
     const byte menuMax = 5;                   // max number of menu items
@@ -216,7 +222,11 @@ void menuItemActions() {
 
 
 void setup() {
-
+//power to encoder -pugs
+pinMode(encoderVCC,OUTPUT);
+pinMode(encoderGND,OUTPUT);
+digitalWrite(encoderVCC,1);
+digitalWrite(encoderGND,0);
     Serial.begin(115200);
     delay(200);
     Serial.println("\n\n\nOled display sketch");
@@ -606,7 +616,7 @@ void exitMenu() {
     else if (encoderPrevA == 1 && encoderPrevB == 1 && pinA == 0 && pinB == 1) encoder0Pos -= 1;
 
     else if (serialDebug) Serial.println("Error: invalid rotary encoder pin state - prev=" + String(encoderPrevA) + "," 
-                                          + String(encoderPrevB) + " new=" + String(pinA) + "," + String(pinB));
+                                          + String(encoderPrevB) + " new=" + String(pinA) + "," + String(pinB) + String(encoder0Pos));
     
   // update previous readings
     encoderPrevA = pinA;
